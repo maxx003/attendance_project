@@ -14,16 +14,45 @@ app.set("views", "./views");
 //middleware (use)
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 const url = `mongodb+srv://theresmariafrancis:Passwordincorrect@cluster0.csqxkqj.mongodb.net/`;
 
 app.get("/", (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
-
   res.render("login");
 });
 
+app.post("/", async (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  const secretKey = "my_secret_key";
+
+  // find user in the database by email
+  const user = await Student.findOne({ email });
+
+  if (!user) {
+    //user not found
+    res.status(404).send("User not found");
+    return;
+  }
+
+  //creating and signing a JWT
+  const unique = user._id.toString();
+
+  // create a jwt
+  const token = jwt.sign(unique, secretKey);
+
+  // stuff the token (jwt) inside the cookie and issue it
+  res.cookie("jwt", token, { maxAge: 5 * 60 * 1000, httpOnly: true });
+
+  bcrypt.compare(password, user.password, (err, result) => {
+    if (result) {
+      res.render("home");
+    } else {
+      res.send("Password does not match our records. Please try again");
+    }
+  });
+});
 app.post("/register", (req, res) => {
   const { email, password, confirmPassword } = req.body;
 
