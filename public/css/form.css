@@ -1,0 +1,183 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f0f0f0;
+}
+header {
+  background-color: blue;
+  color: #fff;
+  padding: 10px 0;
+}
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+.logout-form {
+  text-align: right;
+}
+h3 {
+  font-weight: 400;
+  font-size: 12px;
+  text-align: center;
+  background-color: grey;
+  color: white;
+  padding: 10px 0;
+  border-radius: 5px;
+  white-space: normal; /* Enable word wrapping */
+  margin-bottom: 20px;
+}
+
+table {
+  border-collapse: separate;
+  border-spacing: 1px;
+  margin: 25px auto;
+  font-size: 0.9em;
+  font-family: sans-serif;
+  min-width: 400px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+tr {
+  background-color: #009879;
+  color: #fff;
+  text-align: left;
+}
+
+th,
+td {
+  padding: 12px 15px;
+}
+form#add-student-form {
+  text-align: center;
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+form#delete-student-form {
+  text-align: center;
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+input[type="text"] {
+  width: 80%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  margin-bottom: 15px;
+  transition: border-color 0.3s ease-in-out;
+}
+
+input[type="text"]:focus {
+  border-color: #3498db;
+}
+
+button[type="submit"] {
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+button[type="submit"]:hover {
+  background-color: #258cd1;
+}
+
+button[type="submit"] {
+  background-color: #333;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+#deletenotification {
+  display: none;
+}
+
+#attend {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: left;
+  margin-top: 10px;
+  padding: 35px;
+  background-color: lightblue;
+  border: 1px solid #ccc;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  max-width: 400px;
+  margin: 50px auto;
+  border: 1px solid #009879;
+}
+
+#attendForm {
+  margin-top: -20px;
+  width: 100% !important;
+  max-width: 100%;
+}
+#canvasContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  border-radius: 10px;
+  position: relative; /* Add this for positioning the pseudo-element */
+  overflow: hidden; /* Hide overflowing pseudo-element */
+}
+
+#attendanceChart {
+  width: 80%;
+  max-width: 80%;
+  height: 50vh;
+  max-height: 100%;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+}
+
+#reset {
+  float: right;
+  max-height: 50px;
+}
+
+#reset button {
+  background-color: #009879 !important;
+}
+caption {
+  background-image: linear-gradient(to top, lightblue, #fff);
+  padding: 10px;
+  border-radius: 10px 10px 0px 0px;
+}
+
+@media (max-width: 768px) {
+  #attendanceChart {
+    max-width: 90%;
+  }
+  #canvasContainer {
+    max-width: 90%;
+  }
+}
