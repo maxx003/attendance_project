@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset ="utf-8">
+
+  <title>Success</title>
+  <link rel="stylesheet" type="text/css" href="form.css" />
+   
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" /> 
+</head>
+<body>
+
+  <header>
+    <div class="container" style = "height: 100px;">
+      <center> <img src="/images/download.png"/></center>
+      <form id="logout" action="/logout" method="POST" class="logout-form">
+        <button type="submit" style="position: relative;">Logout</button>
+      </form>
+    </div>
+    <a href="http://localhost:3000/api/docs" style="color:brown; margin-left: 150px; text-decoration: none;">Api Documentation</a>
+  </header>
+
+<div class="container">
+  <table id="table">
+    <caption>
+      <p>Student Roster</p>
+      <div id="'canvasContainer"><canvas id="attendanceChart"></canvas></div>
+    </caption>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Attendance</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% students.forEach((record) =>{ %>
+        <tr>
+
+          <% if(record.attendanceCount < maxAttendanceCount) { %>
+            <td> <%= record.name %>  <i class="fa-solid fa-triangle-exclamation" 
+              style="color: aqua; font-size: 8px; padding: 5px;">Falling Behind</i> </td>   
+              <%  } else { %>
+
+                <%= record.name %>
+
+             <% } %>
+
+             <td><%= record.email %></td>
+             <td><%= record.attendanceCount %></td>
+                    
+          
+        </tr>
+
+      <% }) %>
+    </tbody>
+    <tfoot>
+      <td colspan="100%">
+        <form id="reset" action="/reset" method="POST">
+          <button type="submit" style="border: 1px solid #fff;">Reset Fields</button>
+          
+        </form>
+      </td>
+    </tfoot>
+
+  </table>
+</div>
+</body>
+</html>

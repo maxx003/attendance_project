@@ -22,6 +22,10 @@ app.get("/", (req, res) => {
   res.render("login");
 });
 
+app.get("/home", (req, res) => {
+  res.render("attendance");
+});
+
 app.post("/", async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -47,7 +51,7 @@ app.post("/", async (req, res) => {
 
   bcrypt.compare(password, user.password, (err, result) => {
     if (result) {
-      res.render("home");
+      res.render("attendance");
     } else {
       res.send("Password does not match our records. Please try again");
     }
