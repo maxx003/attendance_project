@@ -4,17 +4,17 @@
   <meta charset ="utf-8">
 
   <title>Success</title>
-  <link rel="stylesheet" type="text/css" href="form.css" />
+  <link rel="stylesheet" type="text/css" href="/css/form.css" />
    
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" /> 
 </head>
 <body>
 
   <header>
-    <div class="container" style = "height: 100px;">
+    <div class="container" style = "height: 200px;">
       <center> <img src="/images/download.png"/></center>
-      <form id="logout" action="/logout" method="POST" class="logout-form">
-        <button type="submit" style="position: relative;">Logout</button>
+      <form id="logout" action="/logout" method="POST" class="logout-form"style="float: right; margin-right: 50px;">
+        <button type="submit" style="position: relative";>Logout</button>
       </form>
     </div>
     <a href="http://localhost:3000/api/docs" style="color:brown; margin-left: 150px; text-decoration: none;">Api Documentation</a>
@@ -64,6 +64,43 @@
     </tfoot>
 
   </table>
+  <div id="attend">
+    <form id="attendForm" action="/updatestudent" method="POST">
+      <h3> <i class="fa-solid fa-school"></i>&nbsp;&nbsp; Attendance Form</h3>
+      <center>
+        <label for="attendanceCount">Date:</label>
+        <input type="date" name="attendanceDate" min="<% new Date().toISOString().split('T') %>">
+      </center>
+      <ul style="padding:0; font-size: 12px;">
+        <% students.forEach((record) =>{ %>
+          <li>
+            <hr>
+            <label>
+              <%= record.name %>
+              <input type="checkbox" name="attendance[]" value="<%= record._id %>">
+
+            </label>
+          </li>
+
+       <% }); %>
+
+      </ul>
+      <div style="text-align: right;">
+      <button type="submit">Submit</button>
+      </div>
+    </form>
+
+  </div>
+
+<form id="add-student-form" action="/addstudent" method="POST">
+<h3>Add Student</h3>
+<input type="text" id="name" name="name" placeholder="Name" required/>
+<input type="text" id="email" name="email" placeholder="Email" required/>
+<br>
+<button type="submit">Submit</button>
+
+</form>
 </div>
+
 </body>
 </html>

@@ -6,6 +6,8 @@ const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const Student = require("./student.js");
+const Record = require("./record.js");
+const student = require("./student.js");
 const app = express();
 
 app.set("view engine", "ejs");
@@ -20,10 +22,6 @@ const url = `mongodb+srv://theresmariafrancis:Passwordincorrect@cluster0.csqxkqj
 
 app.get("/", (req, res) => {
   res.render("login");
-});
-
-app.get("/home", (req, res) => {
-  res.render("attendance");
 });
 
 app.post("/", async (req, res) => {
@@ -96,6 +94,17 @@ mongoose
   .catch((err) => {
     console.log(`Error connecting to the database: ${err}`);
   });
+
+app.get("/home", async (req, res) => {
+  const students = await Record.find({});
+
+  // using max method with cascade oprator to perform function on all students
+  const maxAttendanceCount = Math.max(
+    ...students.map((student) => student.attendanceCount)
+  );
+
+  res.render("attendance", { students, maxAttendanceCount });
+});
 
 const PORT = process.env.PORT || 3000;
 
