@@ -7,7 +7,6 @@ const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const Student = require("./student.js");
 const Record = require("./record.js");
-const student = require("./student.js");
 const app = express();
 
 app.set("view engine", "ejs");
@@ -54,6 +53,11 @@ app.post("/", async (req, res) => {
       res.send("Password does not match our records. Please try again");
     }
   });
+
+  jwt.verify(token, secretKey, (err, decoded) => {
+    console.log(token);
+    console.log(decoded);
+  });
 });
 app.post("/register", (req, res) => {
   const { email, password, confirmPassword } = req.body;
@@ -95,6 +99,15 @@ mongoose
     console.log(`Error connecting to the database: ${err}`);
   });
 
+app.post("/addstudent", (req, res) => {
+  const student = new Record({
+    name: req.body.name,
+    email: req.body.email,
+  });
+
+  student.save();
+  res.redirect("/home");
+});
 app.get("/home", async (req, res) => {
   const students = await Record.find({});
 
