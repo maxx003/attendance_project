@@ -50,12 +50,12 @@
                         <% if(record.attendanceCount < maxAttendanceCount) { %>
 
                         <td><%= record.name %> <i class="fa-solid fa-triangle-exclamation"
-                            style="color:rgb(108, 234, 222);font-size:8px;padding:5px;">Falling Behind</i>
-                            </i></td>
+                            style="color:rgb(141, 6, 13);font-size:8px;padding:5px;">Falling Behind</i>
+                        </td>
 
                        <% } else { %>
 
-                        <%= record.name %>
+                       <td> <%= record.name %> </td>
 
                         <% } %>
 
@@ -92,6 +92,7 @@
                                 <label>
                                 <%= record.name %>
                                 <input type="checkbox" name="attendance[]" value="<%= record._id %>">
+                                <input type="hidden" name="email2" value="<%= record._email %>">
                                 </label>
                             </li>
                           <% }); %>
@@ -115,8 +116,5 @@
     </div>
 
 </body>
-
-
-
 
 </html>

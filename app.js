@@ -119,6 +119,31 @@ app.get("/home", async (req, res) => {
   res.render("attendance", { students, maxAttendanceCount });
 });
 
+app.post("/updatestudent", async (req, res) => {
+  const attendanceDate = req.body.attendanceDate;
+  const length = req.body.attendance ? req.body.attendance.length : 0;
+
+  console.log(req.body.email2);
+
+  try {
+    for (let i = 0; i < length; i++) {
+      const studentId = req.body.attendance[i];
+      const result = await Record.findByIdAndUpdate(
+        studentId,
+        {
+          $inc: { attendanceCount: 1 },
+          $set: { attendanceDate: new Date(attendanceDate) },
+        },
+        { new: true }
+      );
+      return res.status(200).redirect("/home");
+    }
+  } catch (err) {
+    res
+      .status(500)
+      .send("An unknown error has occurred while updating student record.");
+  }
+});
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
