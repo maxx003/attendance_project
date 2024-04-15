@@ -7,6 +7,9 @@ const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const Student = require("./student.js");
 const Record = require("./record.js");
+const student = require("./student.js");
+const session = require("express-session");
+const secretKey = "my_secret_key";
 const app = express();
 
 app.set("view engine", "ejs");
@@ -16,8 +19,40 @@ app.set("views", "./views");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(
+  session({
+    secret: secretKey,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+//High-level middleware function of JWT authentication
+
+function authenticateToken(req, res, next) {
+  const token = req.cookies.jwt;
+
+  if (token) {
+    jwt.verify(token, secretKey, (err, decoded) => {
+      if (err) res.st(401).send("Invalid Token");
+
+      req.userId = decoded;
+
+      next();
+    });
+  }
+}
 
 const url = `mongodb+srv://theresmariafrancis:Passwordincorrect@cluster0.csqxkqj.mongodb.net/`;
+
+mongoose
+  .connect(url)
+  .then(() => {
+    console.log("Connected to MongoDB Database");
+  })
+  .catch((err) => {
+    console.log(`Error connecting to the database: ${err}`);
+  });
 
 app.get("/", (req, res) => {
   res.render("login");
@@ -26,7 +61,6 @@ app.get("/", (req, res) => {
 app.post("/", async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const secretKey = "my_secret_key";
 
   // find user in the database by email
   const user = await Student.findOne({ email });
@@ -40,6 +74,9 @@ app.post("/", async (req, res) => {
   //creating and signing a JWT
   const unique = user._id.toString();
 
+  //Storing userId in the session
+  req.session.userId = user._id.toString();
+
   // create a jwt
   const token = jwt.sign(unique, secretKey);
 
@@ -48,15 +85,10 @@ app.post("/", async (req, res) => {
 
   bcrypt.compare(password, user.password, (err, result) => {
     if (result) {
-      res.render("attendance");
+      res.redirect("home");
     } else {
       res.send("Password does not match our records. Please try again");
     }
-  });
-
-  jwt.verify(token, secretKey, (err, decoded) => {
-    console.log(token);
-    console.log(decoded);
   });
 });
 app.post("/register", (req, res) => {
@@ -90,15 +122,6 @@ app.get("/register", (req, res) => {
   res.render("register");
 });
 
-mongoose
-  .connect(url)
-  .then(() => {
-    console.log("Connected to MongoDB Database");
-  })
-  .catch((err) => {
-    console.log(`Error connecting to the database: ${err}`);
-  });
-
 app.post("/addstudent", (req, res) => {
   const student = new Record({
     name: req.body.name,
@@ -108,7 +131,22 @@ app.post("/addstudent", (req, res) => {
   student.save();
   res.redirect("/home");
 });
-app.get("/home", async (req, res) => {
+
+app.post("/deletestudent", async (req, res) => {
+  const studentName = req.body.name;
+
+  try {
+    const result = await Record.deleteOne({ name: studentName });
+
+    if (result.deletedCount === 0) {
+      res.status(404).send("User does not exist.  Try again.");
+    } else {
+      res.redirect("/home");
+    }
+  } catch (error) {}
+});
+
+app.get("/home", authenticateToken, async (req, res) => {
   const students = await Record.find({});
 
   // using max method with cascade oprator to perform function on all students
@@ -123,8 +161,6 @@ app.post("/updatestudent", async (req, res) => {
   const attendanceDate = req.body.attendanceDate;
   const length = req.body.attendance ? req.body.attendance.length : 0;
 
-  console.log(req.body.email2);
-
   try {
     for (let i = 0; i < length; i++) {
       const studentId = req.body.attendance[i];
@@ -138,6 +174,23 @@ app.post("/updatestudent", async (req, res) => {
       );
       return res.status(200).redirect("/home");
     }
+  } catch (err) {
+    res
+      .status(500)
+      .send("An unknown error has occurred while updating student record.");
+  }
+});
+
+app.post("/reset", async (req, res) => {
+  try {
+    const students = await Record.find({});
+
+    for (let i = 0; i < students.length; i++) {
+      students[i].attendanceCount = 0;
+      await students[i].save();
+    }
+
+    res.redirect("/home");
   } catch (err) {
     res
       .status(500)

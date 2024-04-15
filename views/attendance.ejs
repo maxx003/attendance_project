@@ -21,7 +21,7 @@
          </form>   
         </div>
 
-        <a href="http://localhost:3000/api/docs" style="color:blue;
+        <a href="http://localhost:3000/api/docs" style="color:white;
         margin-left:100px;text-decoration:none;">Api Documentation</a>
     </header>
 
@@ -82,7 +82,7 @@
 
                 <center>
                     <label for="attendanceDate">Date:</label>
-                    <input type="date" name="attendanceDate" min="<% new Date().toISOString().split('T') %>"
+                    <input type="date" name="attendanceDate" min="<% new Date().toISOString().split('T') %>"required/>
                 </center>
 
                 <ul style="padding:0; font-size:12px;">
@@ -110,6 +110,19 @@
                 <button type="submit">Submit</button>
             </form>
 
+            <form id="delete-student-form" action="/deletestudent" style="margin-top:20px; width:90%;" method="POST">
+                <h3>Delete Student</h3>
+                <input type="text" id="name" name="name" placeholder="Name" required />
+                <br>
+                <button type="submit">Delete</button>
+                <br>
+                <div id ='deletenotification' style="margin-top: 10px;">
+                <i class ="fa-solid fa-check"></i>
+                &nbsp;Student successfully deleted!
+                </div>
+            </form>
+
+
         </div>
 
 
@@ -117,4 +130,133 @@
 
 </body>
 
+<script>
+    const deleteNotification = getElementById('deleteNotification');
+    const submitEvent = getElementById('delete-student-form');
+
+
+    submitEvent.addEventListener('submit', () =>{
+
+        deleteNotification.style.display = 'block';
+
+    });
+
+</script>
+
+<script  src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+
+document.addEventListener('DOMContentLoaded', function(){
+
+    const studentsData = JSON.parse('<%- JSON.stringify(students) %>');
+
+
+    //Calculate the sum of attendance counts
+    const sumAttendanceCount = '<%= maxAttendanceCount %>';
+
+    //Calculate the percentages of attendance
+    const percentages = studentsData.map(student => (student.attendanceCount / sumAttendanceCount) * 100 );
+
+  
+    
+    //Create labels and data arrays
+    const labels = studentsData.map(s => (s.attendanceDate ? `${s.name} - ${new Date(s.attendanceDate).toLocaleDateString()}`: ""));
+
+
+    const data = percentages;
+
+
+
+    // Create the Chart.js bar chart
+
+    new Chart(
+
+      document.getElementById('attendanceChart'),
+
+      {
+
+        type: 'pie', // Change to 'bar' chart type
+
+        data: {
+
+          labels: labels,
+
+          datasets: [
+
+            {
+
+              label: 'Attendance Percentage',
+
+              data: data,
+
+              backgroundColor: [
+                'rgb(255, 99, 132)',
+                'rgb(54, 162, 235)',
+                'rgb(255, 205, 86)'
+              ],
+
+            }
+
+          ]
+
+        },
+
+        options: {
+
+          responsive: true,
+
+          maintainAspectRatio: true,
+
+          scales: {
+
+            y: {
+
+              beginAtZero: true,
+
+              title: {
+
+                display: true,
+
+                text: 'Percentage (%)'
+
+              }
+
+            },
+
+            x: {
+
+              title: {
+
+                display: true,
+
+                text: 'Student & Date'
+
+              },
+
+              ticks: {
+
+          font: {
+
+            size: 8 // Adjust the font size for the tick labels
+
+          }
+
+        }
+
+            }
+
+          }
+
+        }
+
+      }
+
+    );
+
+});
+
+
+
+
+</script>
 </html>
