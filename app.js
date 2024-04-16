@@ -40,6 +40,8 @@ function authenticateToken(req, res, next) {
 
       next();
     });
+  } else {
+    res.status(401).render("401");
   }
 }
 
@@ -134,6 +136,7 @@ app.post("/addstudent", (req, res) => {
 
 app.post("/deletestudent", async (req, res) => {
   const studentName = req.body.name;
+  const trimmedName = studentName.trim();
 
   try {
     const result = await Record.deleteOne({ name: studentName });
@@ -172,15 +175,60 @@ app.post("/updatestudent", async (req, res) => {
         },
         { new: true }
       );
-      return res.status(200).redirect("/home");
     }
+
+    return res.status(200).redirect("/home");
   } catch (err) {
     res
       .status(500)
       .send("An unknown error has occurred while updating student record.");
   }
 });
+app.get("/api/v2", async (req, res) => {
+  try {
+    const records = await Record.find({});
+    const formatted = JSON.stringify(records);
+    res.send(formatted);
+  } catch (error) {
+    console.error("Error fetching records:", error);
+    res.status(500).send("Error fetching records");
+  }
+});
 
+app.post("/api/v2", async (req, res) => {
+  try {
+    const { name, email } = req.body;
+
+    // Create a new  student record
+
+    const student = new Record({
+      name: name,
+      email: email,
+    });
+
+    await student.save();
+    res
+      .status(200)
+      .json({ message: "Student added successfully ", student: student });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "An error occurred while adding new student record." });
+  }
+});
+
+app.post("/logout", (req, res) => {
+  res.clearCookie("jwt");
+
+  req.session.userId = null;
+  req.session.destroy((err) => {
+    if (err) {
+      res.status(500).send("Internal Server Error");
+    } else {
+      res.redirect("/");
+    }
+  });
+});
 app.post("/reset", async (req, res) => {
   try {
     const students = await Record.find({});
